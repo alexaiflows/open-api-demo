@@ -1,0 +1,24 @@
+{
+  "response": {
+    "header": {
+      "resultCode": "0000",
+      "resultMsg": "OK"
+    },
+    "body": {
+      "items": {
+        "item": [
+          {
+            "title": "예시 가을 축제",
+            "eventstartdate": "20261010",
+            "eventenddate": "20261012",
+            "addr1": "서울특별시 예시구",
+            "cpyrhtDivCd": "Type1"
+          }
+        ]
+      },
+      "numOfRows": 10,
+      "pageNo": 1,
+      "totalCount": 1
+    }
+  }
+}

@@ -1,0 +1,26 @@
+# 교수자 수업 전 확인용 워크플로. 데모 저장소의 .github/workflows/api_check.yml로 둔다.
+# check_apis.py는 데모 저장소의 api-check/check_apis.py로 둔다.
+# 저장소 Secrets에 DATA_GO_KR_KEY(교수자 계정 Decoding 키)가 있어야 한다. 버튼으로만 실행한다.
+name: API Check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Call public data APIs from GitHub-hosted runner
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: python api-check/check_apis.py

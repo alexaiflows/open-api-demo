@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+_site/
+.DS_Store
+# 인증키를 파일에 적어 두었다면 저장소에 올라가지 않게 합니다
+.env
+*.key

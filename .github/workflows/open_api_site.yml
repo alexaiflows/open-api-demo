@@ -1,0 +1,56 @@
+name: Open API Site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # 수동 실행이 성공한 뒤 아래 두 줄의 #을 지우면 매일 한 번 시트와 API를 다시 읽습니다.
+  # schedule:
+  #   - cron: '17 23 * * *'  # UTC 23:17 = 다음 날 한국시간 08:17
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Test with saved responses (no API call)
+        run: python -m unittest discover -s tests -v
+      - name: Build page from Google Sheet and Open API
+        env:
+          # Settings → Secrets and variables → Actions → Variables에 등록한 값 (공개돼도 되는 설정)
+          SHEET_CSV_URL: ${{ vars.SHEET_CSV_URL }}
+          # Settings → Secrets and variables → Actions → Secrets에 등록한 인증키 (Decoding 키)
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: python main.py --output _site/index.html
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
